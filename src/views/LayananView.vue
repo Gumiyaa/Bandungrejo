@@ -151,7 +151,7 @@ function sendReport() {
     <!-- Search + lacak berkas -->
     <div class="container-x relative z-10 -mt-6">
       <div class="grid gap-2.5 rounded-2xl border border-forest-100 bg-white p-2.5 shadow-[0_22px_50px_-32px_rgba(15,34,19,.5)] lg:grid-cols-[1.15fr_0.85fr]" v-reveal>
-        <form class="flex flex-col gap-2 sm:flex-row" role="search" @submit.prevent="submitSearch">
+        <form class="flex flex-col gap-2 sm:flex-row sm:items-center" role="search" @submit.prevent="submitSearch">
           <div class="relative flex-1">
             <AppIcon name="search" :size="18" class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-forest-900/40" />
             <input
