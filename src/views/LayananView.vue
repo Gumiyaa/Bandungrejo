@@ -80,7 +80,7 @@ function sendReport() {
 <template>
   <div>
     <!-- Page hero -->
-    <section class="relative overflow-hidden border-b border-forest-100 bg-gradient-to-b from-forest-100/70 via-forest-50/70 to-paper">
+    <section class="relative overflow-hidden bg-gradient-to-b from-forest-100/70 via-forest-50/70 to-paper">
       <div class="pointer-events-none absolute -right-32 -top-24 h-96 w-96 rounded-full bg-gold-200/30 blur-3xl" />
       <div class="container-x relative py-10 sm:py-14 lg:py-16">
         <nav class="flex items-center gap-2 text-[11.5px] font-medium text-forest-900/50" aria-label="Breadcrumb">
