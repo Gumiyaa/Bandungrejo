@@ -10,7 +10,7 @@ import { contacts } from '../data/site'
 const route = useRoute()
 
 const query = ref(route.query.q?.toString() || '')
-const category = ref('semua')
+const category = ref(route.query.kategori?.toString() || 'semua')
 const trackId = ref('')
 const trackResult = ref('')
 const trackError = ref('')
@@ -20,6 +20,14 @@ watch(
   () => route.query.q,
   (value) => {
     query.value = value?.toString() || ''
+  },
+)
+
+watch(
+  () => route.query.kategori,
+  (value) => {
+    const key = value?.toString() || 'semua'
+    category.value = categories.some((item) => item.key === key) ? key : 'semua'
   },
 )
 

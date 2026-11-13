@@ -9,6 +9,25 @@ import { budget, news, products, stats } from '../data/site'
 
 const router = useRouter()
 const query = ref('')
+const category = ref('semua')
+
+const layananKategori = [
+  { label: 'Semua Layanan', icon: 'list', query: {}, tone: 'bg-forest-100 text-forest-700' },
+  { label: 'Kependudukan', icon: 'id-card', query: { q: 'ktp' }, tone: 'bg-sky-100 text-sky-600' },
+  { label: 'Usaha & Izin', icon: 'store', query: { q: 'usaha' }, tone: 'bg-gold-100 text-gold-600' },
+  { label: 'Sosial & Bantuan', icon: 'heart', query: { q: 'sktm' }, tone: 'bg-rose-100 text-rose-500' },
+  { label: 'Domisili', icon: 'house', query: { q: 'domisili' }, tone: 'bg-violet-100 text-violet-600' },
+  { label: 'Pengaduan', icon: 'megaphone', query: { q: 'lapor' }, tone: 'bg-amber-100 text-amber-600' },
+]
+
+const potensiKategori = [
+  { label: 'Pertanian', icon: 'sprout', tone: 'bg-emerald-100 text-emerald-700' },
+  { label: 'Peternakan', icon: 'leaf', tone: 'bg-lime-100 text-lime-700' },
+  { label: 'Perajin', icon: 'sparkles', tone: 'bg-fuchsia-100 text-fuchsia-600' },
+  { label: 'UMKM & Kuliner', icon: 'store', tone: 'bg-orange-100 text-orange-600' },
+  { label: 'Kesehatan', icon: 'heart', tone: 'bg-cyan-100 text-cyan-600' },
+  { label: 'Pendidikan', icon: 'graduation', tone: 'bg-indigo-100 text-indigo-600' },
+]
 
 const rupiah = (value) =>
   new Intl.NumberFormat('id-ID', {
@@ -20,7 +39,10 @@ const rupiah = (value) =>
     .replace(/\u00a0/g, ' ')
 
 function search(term = query.value) {
-  router.push({ path: '/layanan', query: term.trim() ? { q: term.trim() } : {} })
+  const params = {}
+  if (term.trim()) params.q = term.trim()
+  if (category.value !== 'semua') params.kategori = category.value
+  router.push({ path: '/layanan', query: params })
 }
 
 const quickSearch = ['KTP', 'SKU', 'SKTM']
@@ -29,117 +51,132 @@ const quickSearch = ['KTP', 'SKU', 'SKTM']
 <template>
   <div>
     <!-- Hero -->
-    <section class="relative isolate overflow-hidden bg-forest-950 text-white">
+    <section class="relative isolate -mt-20 overflow-hidden bg-forest-950 text-white">
       <img
         src="/img/hero.jpg"
         alt="Hamparan sawah Desa Bandungrejo saat pagi hari"
         class="absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div class="absolute inset-0 bg-gradient-to-r from-forest-950/95 via-forest-950/80 to-forest-900/35" />
-      <div class="absolute inset-0 bg-gradient-to-t from-forest-950/80 via-transparent to-forest-950/20" />
-      <div class="hero-grain absolute inset-0 opacity-40" />
+      <div class="absolute inset-0 bg-gradient-to-b from-forest-950/85 via-forest-950/45 to-forest-950/15" />
+      <div class="hero-grain absolute inset-0 opacity-30" />
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-paper via-paper/60 to-transparent sm:h-52" />
 
-      <div class="container-x relative grid gap-10 py-14 sm:py-20 lg:grid-cols-[1.45fr_0.85fr] lg:items-center lg:gap-12 lg:py-24">
-        <div>
-          <p class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-[10.5px] font-bold uppercase tracking-[0.14em] text-gold-100 backdrop-blur-sm">
-            <AppIcon name="shield" :size="13" class="text-gold-300" />
-            Portal Integrasi Layanan Warga Mandiri 24/7
-          </p>
-
-          <h1 class="mt-5 max-w-[660px] text-[34px] leading-[1.06] text-white sm:text-[46px] lg:text-[58px]">
-            Maju, Berbudaya, dan Melayani dengan
-            <em class="italic text-gold-200">Transparansi.</em>
+      <div class="container-x relative pb-24 pt-32 sm:pb-28 sm:pt-36">
+        <div class="mx-auto max-w-3xl text-center">
+          <h1 class="text-[34px] leading-[1.06] text-white sm:text-[48px] lg:text-[62px]">
+            Jelajahi Layanan &amp; Potensi
+            <em class="italic text-gold-200">Desa Bandungrejo</em>
           </h1>
 
-          <p class="mt-5 max-w-xl text-[14px] leading-relaxed text-white/75 sm:text-[15.5px]">
-            Pusat pelayanan administratif modern dan keterbukaan tata kelola desa berbasis digital.
-            Mempercepat urusan kependudukan, memajukan sektor pertanian, dan membuka ruang aspirasi
-            warga Desa Bandungrejo.
+          <p class="mx-auto mt-4 max-w-xl text-[13.5px] leading-relaxed text-white/80 sm:text-[15px]">
+            Urus surat administrasi, ikuti kabar desa, dan temukan produk unggulan warga dalam
+            satu portal yang terbuka untuk semua.
           </p>
 
-          <form class="mt-7 flex max-w-xl flex-col gap-2 rounded-2xl bg-white/95 p-2 shadow-[0_20px_50px_-20px_rgba(0,0,0,.5)] backdrop-blur sm:flex-row" @submit.prevent="search()">
-            <div class="relative flex-1">
-              <AppIcon name="search" :size="18" class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-forest-900/40" />
-              <input
-                v-model="query"
-                type="search"
-                aria-label="Cari layanan desa"
-                placeholder="Cari surat, regulasi, jadwal posyandu…"
-                class="w-full rounded-xl border-0 bg-transparent py-3 pl-10 pr-3 text-[13.5px] text-ink outline-none placeholder:text-forest-900/40"
-              />
+          <form
+            class="mx-auto mt-8 max-w-3xl rounded-2xl bg-white/95 p-2 text-left shadow-[0_24px_60px_-24px_rgba(0,0,0,.55)] backdrop-blur"
+            @submit.prevent="search()"
+          >
+            <div class="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-0">
+              <label class="flex flex-1 items-center gap-2.5 rounded-xl px-3.5 py-2.5">
+                <AppIcon name="id-card" :size="18" class="shrink-0 text-forest-700/60" />
+                <span class="min-w-0 flex-1">
+                  <span class="block text-[9.5px] font-bold uppercase tracking-[0.12em] text-forest-900/45">Kategori</span>
+                  <select
+                    v-model="category"
+                    class="w-full cursor-pointer bg-transparent text-[13px] font-semibold text-forest-950 outline-none"
+                  >
+                    <option value="semua">Semua Layanan</option>
+                    <option value="kependudukan">Kependudukan</option>
+                    <option value="usaha">Usaha &amp; Izin</option>
+                    <option value="sosial">Sosial &amp; Bantuan</option>
+                  </select>
+                </span>
+              </label>
+              <span class="mx-1 hidden h-8 w-px bg-forest-100 sm:block" />
+              <label class="flex flex-1 items-center gap-2.5 rounded-xl px-3.5 py-2.5">
+                <AppIcon name="search" :size="18" class="shrink-0 text-forest-700/60" />
+                <span class="min-w-0 flex-1">
+                  <span class="block text-[9.5px] font-bold uppercase tracking-[0.12em] text-forest-900/45">Cari</span>
+                  <input
+                    v-model="query"
+                    type="search"
+                    aria-label="Cari layanan desa"
+                    placeholder="KTP, SKU, SKTM…"
+                    class="w-full bg-transparent text-[13px] font-semibold text-forest-950 outline-none placeholder:font-normal placeholder:text-forest-900/40"
+                  />
+                </span>
+              </label>
+              <button
+                type="submit"
+                class="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-forest-700 via-forest-500 to-gold-400 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:from-forest-800 hover:via-forest-600 hover:to-gold-500"
+              >
+                <AppIcon name="search" :size="16" />
+                Cari
+              </button>
             </div>
-            <button type="submit" class="btn-primary shrink-0">
-              <AppIcon name="search" :size="16" />
-              Cari Layanan
-            </button>
           </form>
 
-          <div class="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-white/55">
+          <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-[11px] text-white/80">
             <span class="uppercase tracking-[0.1em]">Populer:</span>
             <button
               v-for="term in quickSearch"
               :key="term"
               type="button"
-              class="rounded-full border border-white/20 px-2.5 py-0.5 font-semibold text-white/80 transition hover:border-white/50 hover:text-white"
+              class="rounded-full border border-white/30 bg-forest-950/35 px-2.5 py-0.5 font-semibold text-white/90 backdrop-blur-sm transition hover:border-white/60 hover:text-white"
               @click="search(term)"
             >
               {{ term }}
             </button>
           </div>
-
-          <div class="mt-7 flex flex-wrap gap-3">
-            <RouterLink to="/layanan" class="btn-gold">
-              <AppIcon name="id-card" :size="17" />
-              Ajukan Layanan Mandiri
-            </RouterLink>
-            <a href="#profil" class="btn-ghost-light">
-              <AppIcon name="building" :size="17" />
-              Jelajahi Profil Desa
-            </a>
-          </div>
-        </div>
-
-        <div class="space-y-3 lg:pl-2">
-          <div class="rounded-2xl border border-white/20 bg-forest-950/45 p-5 backdrop-blur-md">
-            <div class="flex items-center justify-between gap-3">
-              <p class="text-[10.5px] font-bold uppercase tracking-[0.15em] text-white/60">Agenda Desa Hari Ini</p>
-              <span class="chip bg-gold-300 text-forest-950">Aktif</span>
-            </div>
-            <h2 class="mt-3 text-[19px] leading-snug text-white">
-              Pelayanan Administrasi Terpadu RW 03
-            </h2>
-            <p class="mt-2 text-[12.5px] leading-relaxed text-white/65">
-              Petugas desa turun langsung ke Balai RW 03 untuk perekaman data administrasi dan
-              aktivasi IKD (Identitas Kependudukan Digital).
-            </p>
-            <p class="mt-3.5 flex items-center gap-2 text-[11.5px] font-semibold text-gold-200">
-              <AppIcon name="clock" :size="14" />
-              09.00 – 14.00 WIB
-              <span class="text-white/40">•</span>
-              <span class="font-normal text-white/65">Balai RW 03 Dk. Bandung</span>
-            </p>
-          </div>
-
-          <div class="flex items-center gap-4 rounded-2xl border border-white/15 bg-white p-4 shadow-xl">
-            <span class="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-forest-100 text-forest-700">
-              <AppIcon name="phone" :size="22" />
-            </span>
-            <div>
-              <p class="text-[10px] font-bold uppercase tracking-[0.13em] text-forest-900/55">
-                Hotline Siaga Bencana & Warga
-              </p>
-              <a href="tel:081225904411" class="mt-0.5 block text-[22px] font-bold tracking-tight text-forest-900">
-                0812-2590-7811
-              </a>
-              <p class="text-[11.5px] text-forest-900/55">Respon Cepat Tanggap 24 Jam Non-Stop</p>
-            </div>
-          </div>
         </div>
       </div>
     </section>
 
+    <!-- Kategori -->
+    <section class="relative z-10 bg-paper pb-14 sm:pb-16">
+      <div class="container-x">
+        <h2 class="text-center text-[26px] leading-tight text-forest-950 sm:text-[32px]">Kategori Layanan</h2>
+        <ul class="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-7 sm:gap-x-10">
+          <li v-for="item in layananKategori" :key="item.label">
+            <RouterLink
+              :to="{ path: '/layanan', query: item.query }"
+              class="group flex w-[94px] flex-col items-center gap-2.5 text-center"
+            >
+              <span
+                class="grid h-[74px] w-[74px] place-items-center rounded-full transition duration-300 group-hover:-translate-y-1 group-hover:shadow-lg"
+                :class="item.tone"
+              >
+                <AppIcon :name="item.icon" :size="28" />
+              </span>
+              <span class="text-[11.5px] font-semibold leading-tight text-forest-900/75 transition group-hover:text-forest-900">
+                {{ item.label }}
+              </span>
+            </RouterLink>
+          </li>
+        </ul>
+
+        <h2 class="mt-12 text-center text-[26px] leading-tight text-forest-950 sm:mt-14 sm:text-[32px]">Potensi Warga</h2>
+        <ul class="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-7 sm:gap-x-10">
+          <li v-for="item in potensiKategori" :key="item.label">
+            <a href="#potensi" class="group flex w-[94px] flex-col items-center gap-2.5 text-center">
+              <span
+                class="grid h-[74px] w-[74px] place-items-center rounded-full transition duration-300 group-hover:-translate-y-1 group-hover:shadow-lg"
+                :class="item.tone"
+              >
+                <AppIcon :name="item.icon" :size="28" />
+              </span>
+              <span class="text-[11.5px] font-semibold leading-tight text-forest-900/75 transition group-hover:text-forest-900">
+                {{ item.label }}
+              </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
     <!-- Statistik -->
-    <div class="container-x relative z-10 -mt-8 sm:-mt-10">
+    <div class="container-x relative z-10 pb-4">
       <dl class="grid grid-cols-2 overflow-hidden rounded-2xl border border-forest-100 bg-white shadow-[0_24px_60px_-35px_rgba(15,34,19,.5)] sm:grid-cols-5" v-reveal>
         <div
           v-for="stat in stats"
