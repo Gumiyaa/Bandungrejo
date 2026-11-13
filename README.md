@@ -20,10 +20,11 @@ npm run preview
 
 ## Tampilan
 
-- Hero beranda: foto desa penuh, judul serif, kolom cari (kategori + kata kunci) yang langsung membuka `/layanan?q=…&kategori=…`.
-- Navigasi pill: transparan di atas hero beranda, putih saat scroll; halaman lain pakai pill yang sama.
-- Shortcut kategori layanan (6 lingkaran) dan potensi warga (6 lingkaran) di bawah hero.
-- Logo lambang Demak tampil tanpa kotak/border, menyatu dengan header.
+Beranda dibuka dengan hamparan sawah Desa Bandungrejo yang memenuhi layar, ditemani judul serif besar dan satu kolom pencarian di tengahnya. Dari situ warga bisa memilih kategori lalu mengetik kebutuhannya, dan hasilnya langsung dibawa ke halaman `/layanan` lewat `?q=…&kategori=…`.
+
+Navigasi berbentuk pill melayang di atas foto saat halaman belum digulir, lalu berubah putih bersih begitu pengunjung mulai membaca. Gaya yang sama dipakai di halaman lain agar tidak ada dua bahasa desain. Di bawah hero, enam lingkaran kategori layanan dan enam lingkaran potensi warga menjadi pintu cepat menuju administrasi maupun produk unggulan desa.
+
+Lambang Kabupaten Demak di kiri atas sengaja dibiarkan tanpa kotak dan bayangan, menyatu dengan latar header seperti cap resmi yang menempel langsung pada halaman.
 
 ## Struktur
 
