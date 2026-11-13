@@ -18,6 +18,13 @@ npm run build
 npm run preview
 ```
 
+## Tampilan
+
+- Hero beranda: foto desa penuh, judul serif, kolom cari (kategori + kata kunci) yang langsung membuka `/layanan?q=…&kategori=…`.
+- Navigasi pill: transparan di atas hero beranda, putih saat scroll; halaman lain pakai pill yang sama.
+- Shortcut kategori layanan (6 lingkaran) dan potensi warga (6 lingkaran) di bawah hero.
+- Logo lambang Demak tampil tanpa kotak/border, menyatu dengan header.
+
 ## Struktur
 
 - `src/views/HomeView.vue` — beranda (hero, statistik, layanan, sambutan, APBDes, berita, UMKM, peta)
