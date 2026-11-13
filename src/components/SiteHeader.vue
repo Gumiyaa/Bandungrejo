@@ -84,7 +84,7 @@ onUnmounted(() => {
       <nav class="absolute left-1/2 hidden -translate-x-1/2 lg:block" aria-label="Navigasi utama">
         <ul
           class="flex items-center gap-0.5 rounded-full border p-1 backdrop-blur-md transition-colors"
-          :class="overlay ? 'border-white/25 bg-white/15' : 'border-forest-100 bg-forest-50/80'"
+          :class="overlay ? 'border-white/25 bg-white/15' : 'border-forest-900/10 bg-forest-900/90 shadow-[0_10px_30px_-20px_rgba(15,34,19,.8)]'"
         >
           <li v-for="item in pillNav" :key="item.to">
             <RouterLink
@@ -92,12 +92,10 @@ onUnmounted(() => {
               class="inline-flex items-center rounded-full px-4 py-2 text-[12.5px] font-semibold transition"
               :class="
                 isActive(item)
-                  ? overlay
-                    ? 'bg-white text-forest-950 shadow-sm'
-                    : 'bg-white text-forest-900 shadow-sm'
+                  ? 'bg-white text-forest-950 shadow-sm'
                   : overlay
                     ? 'text-white/80 hover:text-white'
-                    : 'text-forest-900/65 hover:text-forest-900'
+                    : 'text-white/70 hover:text-white'
               "
               @click="onNav(item)"
             >
@@ -213,15 +211,15 @@ onUnmounted(() => {
 
       <nav class="hidden border-t border-forest-100/80 py-2.5 lg:block" aria-label="Navigasi utama">
         <div class="container-x flex items-center justify-between gap-4">
-          <ul class="flex items-center gap-0.5 rounded-full border border-forest-100 bg-forest-50/80 p-1">
+          <ul class="flex items-center gap-0.5 rounded-full border border-forest-900/10 bg-forest-900/90 p-1 shadow-[0_10px_30px_-20px_rgba(15,34,19,.8)] backdrop-blur">
             <li v-for="item in nav" :key="item.to">
               <RouterLink
                 :to="item.to"
                 class="inline-flex items-center rounded-full px-3.5 py-2 text-[12.5px] font-semibold transition"
                 :class="
                   isActive(item)
-                    ? 'bg-white text-forest-900 shadow-sm ring-1 ring-forest-100'
-                    : 'text-forest-900/65 hover:text-forest-900'
+                    ? 'bg-white text-forest-900 shadow-sm'
+                    : 'text-white/70 hover:text-white'
                 "
                 @click="onNav(item)"
               >
