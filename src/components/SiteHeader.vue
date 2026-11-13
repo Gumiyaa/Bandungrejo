@@ -9,8 +9,7 @@ const route = useRoute()
 const scrolled = ref(false)
 const open = ref(false)
 
-const isHome = computed(() => route.path === '/')
-const overlay = computed(() => isHome.value && !scrolled.value)
+const overlay = computed(() => route.path === '/' && !scrolled.value)
 const pillNav = nav.filter((item) => ['Beranda', 'Profil Desa', 'Layanan', 'Potensi & UMKM', 'Berita'].includes(item.label))
 
 function onScroll() {
@@ -61,8 +60,7 @@ onUnmounted(() => {
         : 'border-b border-forest-100 bg-white shadow-[0_8px_30px_-24px_rgba(15,34,19,.5)]'
     "
   >
-    <!-- Home: satu baris mengambang di atas hero -->
-    <div v-if="isHome" class="container-x relative flex h-20 items-center justify-between gap-4">
+    <div class="container-x relative flex h-20 items-center justify-between gap-4">
       <RouterLink to="/" class="relative z-10 flex items-center gap-2.5" aria-label="Beranda Desa Bandungrejo">
         <BrandLogo :size="54" class="shrink-0" />
         <span class="hidden leading-tight sm:block">
@@ -81,15 +79,19 @@ onUnmounted(() => {
         </span>
       </RouterLink>
 
-      <nav class="absolute left-1/2 hidden -translate-x-1/2 lg:block" aria-label="Navigasi utama">
+      <nav class="absolute left-1/2 hidden w-max -translate-x-1/2 lg:block" aria-label="Navigasi utama">
         <ul
           class="flex items-center gap-0.5 rounded-full border p-1 backdrop-blur-md transition-colors"
-          :class="overlay ? 'border-white/25 bg-white/15' : 'border-forest-900/10 bg-forest-900/90 shadow-[0_10px_30px_-20px_rgba(15,34,19,.8)]'"
+          :class="
+            overlay
+              ? 'border-white/25 bg-white/15'
+              : 'border-forest-900/10 bg-forest-900/90 shadow-[0_10px_30px_-20px_rgba(15,34,19,.8)]'
+          "
         >
           <li v-for="item in pillNav" :key="item.to">
             <RouterLink
               :to="item.to"
-              class="inline-flex items-center rounded-full px-4 py-2 text-[12.5px] font-semibold transition"
+              class="inline-flex items-center whitespace-nowrap rounded-full px-3.5 py-2 text-[12.5px] font-semibold transition"
               :class="
                 isActive(item)
                   ? 'bg-white text-forest-950 shadow-sm'
@@ -135,105 +137,6 @@ onUnmounted(() => {
         </button>
       </div>
     </div>
-
-    <!-- Halaman lain: header lengkap -->
-    <template v-else>
-      <div
-        class="hidden overflow-hidden bg-forest-950 text-white/70 transition-all duration-300 md:block"
-        :class="scrolled ? 'max-h-0 opacity-0' : 'max-h-10 opacity-100'"
-      >
-        <div class="container-x flex h-9 items-center justify-between gap-4 text-[11px]">
-          <div class="flex items-center gap-5">
-            <span class="inline-flex items-center gap-1.5">
-              <AppIcon name="shield" :size="13" class="text-gold-300" />
-              Portal Resmi Pemerintah Desa Bandungrejo
-            </span>
-            <span class="hidden items-center gap-1.5 lg:inline-flex">
-              <AppIcon name="clock" :size="13" class="text-gold-300" />
-              Pelayanan: Senin – Jumat (08.00 – 15.30 WIB)
-            </span>
-          </div>
-          <div class="flex items-center gap-4">
-            <a href="tel:0291685112" class="inline-flex items-center gap-1.5 transition hover:text-white">
-              <AppIcon name="phone" :size="13" />
-              (0291) 685-112
-            </a>
-            <a
-              href="mailto:pemdes@bandungrejo-demak.desa.id"
-              class="hidden items-center gap-1.5 transition hover:text-white xl:inline-flex"
-            >
-              <AppIcon name="mail" :size="13" />
-              pemdes@bandungrejo-demak.desa.id
-            </a>
-            <a href="tel:081225904411" class="inline-flex items-center gap-1.5 font-semibold text-gold-200 transition hover:text-gold-100">
-              <span class="h-1.5 w-1.5 rounded-full bg-red-400" />
-              Darurat
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="container-x flex h-20 items-center justify-between gap-6 lg:h-[88px]">
-        <RouterLink to="/" class="flex items-center gap-3" aria-label="Beranda Desa Bandungrejo">
-          <BrandLogo :size="60" class="shrink-0" />
-          <span class="block leading-tight">
-            <span class="block font-display text-xl font-semibold text-forest-900 sm:text-2xl">Desa Bandungrejo</span>
-            <span class="mt-0.5 block text-[10px] font-semibold uppercase tracking-[0.13em] text-forest-700/70">
-              Kec. Karanganyar, Kab. Demak, Jawa Tengah
-            </span>
-          </span>
-        </RouterLink>
-
-        <div class="flex items-center gap-2.5">
-          <RouterLink to="/layanan" class="btn-primary btn-sm hidden sm:inline-flex">
-            <AppIcon name="id-card" :size="15" />
-            Layanan Mandiri Warga
-          </RouterLink>
-          <a
-            href="tel:081225904411"
-            class="grid h-10 w-10 place-items-center rounded-lg border border-forest-200 text-forest-800 transition hover:bg-forest-50 sm:hidden"
-            aria-label="Telepon darurat desa"
-          >
-            <AppIcon name="phone" :size="17" />
-          </a>
-          <button
-            type="button"
-            class="grid h-10 w-10 place-items-center rounded-lg border border-forest-200 text-forest-900 transition hover:bg-forest-50 lg:hidden"
-            :aria-expanded="open"
-            aria-controls="menu-mobile"
-            aria-label="Buka menu navigasi"
-            @click="open = !open"
-          >
-            <AppIcon :name="open ? 'x' : 'menu'" :size="19" />
-          </button>
-        </div>
-      </div>
-
-      <nav class="hidden border-t border-forest-100/80 py-2.5 lg:block" aria-label="Navigasi utama">
-        <div class="container-x flex items-center justify-between gap-4">
-          <ul class="flex items-center gap-0.5 rounded-full border border-forest-900/10 bg-forest-900/90 p-1 shadow-[0_10px_30px_-20px_rgba(15,34,19,.8)] backdrop-blur">
-            <li v-for="item in nav" :key="item.to">
-              <RouterLink
-                :to="item.to"
-                class="inline-flex items-center rounded-full px-3.5 py-2 text-[12.5px] font-semibold transition"
-                :class="
-                  isActive(item)
-                    ? 'bg-white text-forest-900 shadow-sm'
-                    : 'text-white/70 hover:text-white'
-                "
-                @click="onNav(item)"
-              >
-                {{ item.label }}
-              </RouterLink>
-            </li>
-          </ul>
-          <RouterLink to="/layanan#lapor" class="link-arrow shrink-0 text-[12.5px]">
-            <AppIcon name="megaphone" :size="14" />
-            Pengaduan Warga
-          </RouterLink>
-        </div>
-      </nav>
-    </template>
 
     <!-- Mobile drawer -->
     <Transition
