@@ -8,6 +8,6 @@ defineProps({ size: { type: [String, Number], default: 44 } })
     :width="size"
     :height="size"
     alt="Lambang Kabupaten Demak"
-    class="shrink-0 object-contain mix-blend-multiply"
+    class="shrink-0 object-contain"
   />
 </template>

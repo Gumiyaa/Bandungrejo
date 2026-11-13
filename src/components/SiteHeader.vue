@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import BrandLogo from './BrandLogo.vue'
 import AppIcon from './AppIcon.vue'
@@ -8,6 +8,10 @@ import { nav } from '../data/site'
 const route = useRoute()
 const scrolled = ref(false)
 const open = ref(false)
+
+const isHome = computed(() => route.path === '/')
+const overlay = computed(() => isHome.value && !scrolled.value)
+const pillNav = nav.filter((item) => ['Beranda', 'Profil Desa', 'Layanan', 'Potensi & UMKM', 'Berita'].includes(item.label))
 
 function onScroll() {
   scrolled.value = window.scrollY > 32
@@ -50,72 +54,80 @@ onUnmounted(() => {
 
 <template>
   <header
-    class="sticky top-0 z-50 border-b border-forest-100 bg-white shadow-[0_1px_0_rgba(15,34,19,.02)] transition-shadow duration-300"
-    :class="scrolled ? 'shadow-[0_8px_30px_-20px_rgba(15,34,19,.5)]' : ''"
+    class="sticky top-0 z-50 transition-colors duration-300"
+    :class="
+      overlay
+        ? 'bg-transparent'
+        : 'border-b border-forest-100 bg-white shadow-[0_8px_30px_-24px_rgba(15,34,19,.5)]'
+    "
   >
-    <!-- Top bar -->
-    <div
-      class="hidden overflow-hidden bg-forest-950 text-white/70 transition-all duration-300 md:block"
-      :class="scrolled ? 'max-h-0 opacity-0' : 'max-h-10 opacity-100'"
-    >
-      <div class="container-x flex h-9 items-center justify-between gap-4 text-[11px]">
-        <div class="flex items-center gap-5">
-          <span class="inline-flex items-center gap-1.5">
-            <AppIcon name="shield" :size="13" class="text-gold-300" />
-            Portal Resmi Pemerintah Desa Bandungrejo
-          </span>
-          <span class="hidden items-center gap-1.5 lg:inline-flex">
-            <AppIcon name="clock" :size="13" class="text-gold-300" />
-            Pelayanan: Senin – Jumat (08.00 – 15.30 WIB)
-          </span>
-        </div>
-        <div class="flex items-center gap-4">
-          <a href="tel:0291685112" class="inline-flex items-center gap-1.5 transition hover:text-white">
-            <AppIcon name="phone" :size="13" />
-            (0291) 685-112
-          </a>
-          <a
-            href="mailto:pemdes@bandungrejo-demak.desa.id"
-            class="hidden items-center gap-1.5 transition hover:text-white xl:inline-flex"
+    <!-- Home: satu baris mengambang di atas hero -->
+    <div v-if="isHome" class="container-x relative flex h-20 items-center justify-between gap-4">
+      <RouterLink to="/" class="relative z-10 flex items-center gap-2.5" aria-label="Beranda Desa Bandungrejo">
+        <BrandLogo :size="54" class="shrink-0" />
+        <span class="hidden leading-tight sm:block">
+          <span
+            class="block font-display text-lg font-semibold"
+            :class="overlay ? 'text-white' : 'text-forest-900'"
           >
-            <AppIcon name="mail" :size="13" />
-            pemdes@bandungrejo-demak.desa.id
-          </a>
-          <a href="tel:081225904411" class="inline-flex items-center gap-1.5 font-semibold text-gold-200 transition hover:text-gold-100">
-            <span class="h-1.5 w-1.5 rounded-full bg-red-400" />
-            Darurat
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Brand row -->
-    <div class="container-x flex h-20 items-center justify-between gap-6 lg:h-[88px]">
-      <RouterLink to="/" class="flex items-center gap-3" aria-label="Beranda Desa Bandungrejo">
-        <BrandLogo :size="60" class="shrink-0" />
-        <span class="block leading-tight">
-          <span class="block font-display text-xl font-semibold text-forest-900 sm:text-2xl">Desa Bandungrejo</span>
-          <span class="mt-0.5 block text-[10px] font-semibold uppercase tracking-[0.13em] text-forest-700/70">
-            Kec. Karanganyar, Kab. Demak, Jawa Tengah
+            Bandungrejo
+          </span>
+          <span
+            class="block text-[9.5px] font-semibold uppercase tracking-[0.13em]"
+            :class="overlay ? 'text-white/70' : 'text-forest-700/70'"
+          >
+            Kec. Karanganyar, Demak
           </span>
         </span>
       </RouterLink>
 
-      <div class="flex items-center gap-2.5">
-        <RouterLink to="/layanan" class="btn-primary btn-sm hidden sm:inline-flex">
-          <AppIcon name="id-card" :size="15" />
-          Layanan Mandiri Warga
-        </RouterLink>
-        <a
-          href="tel:081225904411"
-          class="grid h-10 w-10 place-items-center rounded-lg border border-forest-200 text-forest-800 transition hover:bg-forest-50 sm:hidden"
-          aria-label="Telepon darurat desa"
+      <nav class="absolute left-1/2 hidden -translate-x-1/2 lg:block" aria-label="Navigasi utama">
+        <ul
+          class="flex items-center gap-0.5 rounded-full border p-1 backdrop-blur-md transition-colors"
+          :class="overlay ? 'border-white/25 bg-white/15' : 'border-forest-100 bg-forest-50/80'"
         >
-          <AppIcon name="phone" :size="17" />
-        </a>
+          <li v-for="item in pillNav" :key="item.to">
+            <RouterLink
+              :to="item.to"
+              class="inline-flex items-center rounded-full px-4 py-2 text-[12.5px] font-semibold transition"
+              :class="
+                isActive(item)
+                  ? overlay
+                    ? 'bg-white text-forest-950 shadow-sm'
+                    : 'bg-white text-forest-900 shadow-sm'
+                  : overlay
+                    ? 'text-white/80 hover:text-white'
+                    : 'text-forest-900/65 hover:text-forest-900'
+              "
+              @click="onNav(item)"
+            >
+              {{ item.label }}
+            </RouterLink>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="relative z-10 flex items-center gap-2">
+        <RouterLink
+          to="/layanan#lapor"
+          class="hidden items-center gap-2 rounded-full px-4 py-2.5 text-[12.5px] font-semibold transition sm:inline-flex"
+          :class="
+            overlay
+              ? 'bg-white text-forest-950 shadow-lg hover:bg-gold-100'
+              : 'bg-forest-800 text-white hover:bg-forest-700'
+          "
+        >
+          <AppIcon name="phone" :size="14" />
+          Hubungi Kami
+        </RouterLink>
         <button
           type="button"
-          class="grid h-10 w-10 place-items-center rounded-lg border border-forest-200 text-forest-900 transition hover:bg-forest-50 lg:hidden"
+          class="grid h-10 w-10 place-items-center rounded-full border transition lg:hidden"
+          :class="
+            overlay
+              ? 'border-white/40 text-white hover:bg-white/15'
+              : 'border-forest-200 text-forest-900 hover:bg-forest-50'
+          "
           :aria-expanded="open"
           aria-controls="menu-mobile"
           aria-label="Buka menu navigasi"
@@ -126,31 +138,104 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- Desktop nav -->
-    <nav class="hidden border-t border-forest-100/80 lg:block" aria-label="Navigasi utama">
-      <div class="container-x flex h-11 items-center justify-between">
-        <ul class="flex items-center gap-0.5">
-          <li v-for="item in nav" :key="item.to">
-            <RouterLink
-              :to="item.to"
-              class="relative inline-flex h-11 items-center px-3 text-[13px] font-semibold transition"
-              :class="isActive(item) ? 'text-forest-900' : 'text-forest-900/65 hover:text-forest-900'"
-              @click="onNav(item)"
+    <!-- Halaman lain: header lengkap -->
+    <template v-else>
+      <div
+        class="hidden overflow-hidden bg-forest-950 text-white/70 transition-all duration-300 md:block"
+        :class="scrolled ? 'max-h-0 opacity-0' : 'max-h-10 opacity-100'"
+      >
+        <div class="container-x flex h-9 items-center justify-between gap-4 text-[11px]">
+          <div class="flex items-center gap-5">
+            <span class="inline-flex items-center gap-1.5">
+              <AppIcon name="shield" :size="13" class="text-gold-300" />
+              Portal Resmi Pemerintah Desa Bandungrejo
+            </span>
+            <span class="hidden items-center gap-1.5 lg:inline-flex">
+              <AppIcon name="clock" :size="13" class="text-gold-300" />
+              Pelayanan: Senin – Jumat (08.00 – 15.30 WIB)
+            </span>
+          </div>
+          <div class="flex items-center gap-4">
+            <a href="tel:0291685112" class="inline-flex items-center gap-1.5 transition hover:text-white">
+              <AppIcon name="phone" :size="13" />
+              (0291) 685-112
+            </a>
+            <a
+              href="mailto:pemdes@bandungrejo-demak.desa.id"
+              class="hidden items-center gap-1.5 transition hover:text-white xl:inline-flex"
             >
-              {{ item.label }}
-              <span
-                v-if="isActive(item)"
-                class="absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-forest-700"
-              />
-            </RouterLink>
-          </li>
-        </ul>
-        <RouterLink to="/layanan#lapor" class="link-arrow text-[12.5px]">
-          <AppIcon name="megaphone" :size="14" />
-          Pengaduan Warga
-        </RouterLink>
+              <AppIcon name="mail" :size="13" />
+              pemdes@bandungrejo-demak.desa.id
+            </a>
+            <a href="tel:081225904411" class="inline-flex items-center gap-1.5 font-semibold text-gold-200 transition hover:text-gold-100">
+              <span class="h-1.5 w-1.5 rounded-full bg-red-400" />
+              Darurat
+            </a>
+          </div>
+        </div>
       </div>
-    </nav>
+
+      <div class="container-x flex h-20 items-center justify-between gap-6 lg:h-[88px]">
+        <RouterLink to="/" class="flex items-center gap-3" aria-label="Beranda Desa Bandungrejo">
+          <BrandLogo :size="60" class="shrink-0" />
+          <span class="block leading-tight">
+            <span class="block font-display text-xl font-semibold text-forest-900 sm:text-2xl">Desa Bandungrejo</span>
+            <span class="mt-0.5 block text-[10px] font-semibold uppercase tracking-[0.13em] text-forest-700/70">
+              Kec. Karanganyar, Kab. Demak, Jawa Tengah
+            </span>
+          </span>
+        </RouterLink>
+
+        <div class="flex items-center gap-2.5">
+          <RouterLink to="/layanan" class="btn-primary btn-sm hidden sm:inline-flex">
+            <AppIcon name="id-card" :size="15" />
+            Layanan Mandiri Warga
+          </RouterLink>
+          <a
+            href="tel:081225904411"
+            class="grid h-10 w-10 place-items-center rounded-lg border border-forest-200 text-forest-800 transition hover:bg-forest-50 sm:hidden"
+            aria-label="Telepon darurat desa"
+          >
+            <AppIcon name="phone" :size="17" />
+          </a>
+          <button
+            type="button"
+            class="grid h-10 w-10 place-items-center rounded-lg border border-forest-200 text-forest-900 transition hover:bg-forest-50 lg:hidden"
+            :aria-expanded="open"
+            aria-controls="menu-mobile"
+            aria-label="Buka menu navigasi"
+            @click="open = !open"
+          >
+            <AppIcon :name="open ? 'x' : 'menu'" :size="19" />
+          </button>
+        </div>
+      </div>
+
+      <nav class="hidden border-t border-forest-100/80 py-2.5 lg:block" aria-label="Navigasi utama">
+        <div class="container-x flex items-center justify-between gap-4">
+          <ul class="flex items-center gap-0.5 rounded-full border border-forest-100 bg-forest-50/80 p-1">
+            <li v-for="item in nav" :key="item.to">
+              <RouterLink
+                :to="item.to"
+                class="inline-flex items-center rounded-full px-3.5 py-2 text-[12.5px] font-semibold transition"
+                :class="
+                  isActive(item)
+                    ? 'bg-white text-forest-900 shadow-sm ring-1 ring-forest-100'
+                    : 'text-forest-900/65 hover:text-forest-900'
+                "
+                @click="onNav(item)"
+              >
+                {{ item.label }}
+              </RouterLink>
+            </li>
+          </ul>
+          <RouterLink to="/layanan#lapor" class="link-arrow shrink-0 text-[12.5px]">
+            <AppIcon name="megaphone" :size="14" />
+            Pengaduan Warga
+          </RouterLink>
+        </div>
+      </nav>
+    </template>
 
     <!-- Mobile drawer -->
     <Transition
